@@ -14,7 +14,7 @@ const MealItem = (props) => {
                 {'£' + props.price.toFixed(2)}
             </p>
             <div>
-                <MealItemForm />
+                <MealItemForm id={props.id} />
             </div>
         </li>
     )
