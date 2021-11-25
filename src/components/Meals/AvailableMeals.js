@@ -6,8 +6,10 @@ import Card from "../UI/Card";
 
 const AvailableMeals = () => {
     const [meals, setMeals] = useState([]);
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
+        setIsLoading(true);
         const fetchMeals = async () => {
             try {
                 const request = await fetch(
@@ -26,6 +28,7 @@ const AvailableMeals = () => {
                 }
 
                 setMeals(meals);
+                setIsLoading(false);
             } catch (err) {
                 console.log(err);
             }
@@ -48,7 +51,8 @@ const AvailableMeals = () => {
     return (
         <section className={styles.meals}>
             <Card>
-                <ul className={styles.meals}>{mealsList}</ul>
+                {isLoading ? <p>Loading...</p> : <ul className={styles.meals}>{mealsList}</ul>}
+
             </Card>
         </section>
     );
