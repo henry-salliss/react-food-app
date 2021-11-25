@@ -7,6 +7,7 @@ import styles from "./HeaderCartButton.module.css";
 const HeaderCartButton = (props) => {
     const cartContext = useContext(CartContext);
 
+    // btn state
     const [btnAnimated, setBtnAnimated] = useState(false);
 
     const numOfCartItems = cartContext.items.reduce((current, item) => {
@@ -15,6 +16,8 @@ const HeaderCartButton = (props) => {
 
     const btnClasses = `${styles.button} ${btnAnimated ? styles.bump : ''}`
 
+
+    // make button bump
     useEffect(() => {
         if (cartContext.items.length === 0) return;
         setBtnAnimated(true);
