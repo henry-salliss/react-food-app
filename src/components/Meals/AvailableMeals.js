@@ -7,14 +7,17 @@ import Card from "../UI/Card";
 const AvailableMeals = () => {
     const [meals, setMeals] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         setIsLoading(true);
         const fetchMeals = async () => {
             try {
                 const request = await fetch(
-                    "https://food-order-app-e6381-default-rtdb.firebaseio.com/meals.json"
+                    "https://food-order-app-e6381-default-rtdb.firebaseio.com/meals.json/"
                 );
+                console.log(request.ok);
+                if (!request.ok) throw new Error('Something went wrong')
 
                 const data = await request.json();
                 const meals = [];
@@ -31,6 +34,7 @@ const AvailableMeals = () => {
                 setIsLoading(false);
             } catch (err) {
                 console.log(err);
+                setError(err.message)
             }
         };
 
@@ -44,13 +48,13 @@ const AvailableMeals = () => {
             name={meal.name}
             description={meal.description}
             price={meal.price}
-            key={meal.id}
         />
     ));
 
     return (
         <section className={styles.meals}>
             <Card>
+                {error ? <p>{error}</p> : ''}
                 {isLoading ? <p>Loading...</p> : <ul className={styles.meals}>{mealsList}</ul>}
 
             </Card>
