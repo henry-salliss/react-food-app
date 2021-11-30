@@ -13,12 +13,45 @@
   .submit {
     text-align: center;
     margin-top: 5%;
+    cursor: pointer;
+    background-color: #8a2b06;
+    color: white;
+    border: 1px solid #8a2b06;
+    padding: 0.5rem 2rem;
+    border-radius: 25px;
+  }
+  
+  .cancel {
+    text-align: center;
+    margin-top: 5%;
+    cursor: pointer;
+    background-color: #ffffff;
+    color: #8a2b06;
+    border: 1px solid #8a2b06;
+    padding: 0.5rem 2rem;
+    border-radius: 25px;
+    margin-left: 3%;
   }
   
   .error-text {
     color: red;
+    font-size: 10px;
   }
   
   .disabled {
+    text-align: center;
+    margin-top: 5%;
+    cursor: pointer;
+    background-color: gray;
+    color: white;
+    border: 1px solid #8a2b06;
+    padding: 0.5rem 2rem;
+    border-radius: 25px;
     cursor: not-allowed;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-around;
+    width: 25%;
   }

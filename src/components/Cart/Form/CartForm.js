@@ -3,22 +3,31 @@ import useInput from "../../../hooks/use-input";
 
 const CartForm = (props) => {
     const {
-        value: firstNameValue,
-        isValid: firstNameIsValid,
-        isNotValid: firstNameIsNotValid,
-        inputChangeHandler: firstNameChangeHandler,
-        inputBlurHandler: firstNameBlurHandler,
-        reset: firstNameReset,
+        value: nameValue,
+        isValid: nameIsValid,
+        isNotValid: nameIsNotValid,
+        inputChangeHandler: nameChangeHandler,
+        inputBlurHandler: nameBlurHandler,
+        reset: nameReset,
     } = useInput((value) => value !== "");
 
     const {
-        value: lastNameValue,
-        isValid: lastNameIsValid,
-        isNotValid: lastNameIsNotValid,
-        inputChangeHandler: lastNameChangeHandler,
-        inputBlurHandler: lastNameBlurHandler,
-        reset: lastNameReset,
+        value: streetNameValue,
+        isValid: streetNameIsValid,
+        isNotValid: streetNameIsNotValid,
+        inputChangeHandler: streetNameChangeHandler,
+        inputBlurHandler: streetNameBlurHandler,
+        reset: streetNameReset,
     } = useInput((value) => value !== "");
+
+    const {
+        value: postCodeValue,
+        isValid: postCodeIsValid,
+        isNotValid: postCodeIsNotValid,
+        inputChangeHandler: postCodeChangeHandler,
+        inputBlurHandler: postCodeBlurHandler,
+        reset: postCodeReset,
+    } = useInput((value) => value !== "" && value.length === 7);
 
     const {
         value: phoneNumberValue,
@@ -39,54 +48,83 @@ const CartForm = (props) => {
     } = useInput((value) => value !== "" && value.includes("@"));
 
     let formIsValid = false;
-    if (firstNameIsValid && lastNameIsValid && phoneNumberIsValid && emailIsValid)
+    if (
+        nameIsValid &&
+        streetNameIsValid &&
+        phoneNumberIsValid &&
+        emailIsValid &&
+        postCodeIsValid
+    )
         formIsValid = true;
 
     const submitHandler = (e) => {
         e.preventDefault();
-        console.log(formIsValid);
         // reset values
-        firstNameReset();
-        lastNameReset();
+        nameReset();
+        streetNameReset();
         phoneNumberReset();
         emailReset();
+        postCodeReset();
 
-        // hide the form from cart component
-        props.onOrderFood();
+        // send data to the backend
+        props.onOrder({
+            name: nameValue,
+            street: streetNameValue,
+            postcode: postCodeValue,
+            number: phoneNumberValue,
+            email: emailValue,
+        });
     };
 
     return (
         <form className={styles.checkoutForm} onSubmit={submitHandler}>
             <div>
-                <label className={styles.inputLabel} htmlFor="firstName">
-                    First name
+                <label className={styles.inputLabel} htmlFor="name">
+                    Name
                 </label>
                 <input
-                    id="firstName"
+                    id="name"
                     type="text"
-                    value={firstNameValue}
-                    onBlur={firstNameBlurHandler}
-                    onChange={firstNameChangeHandler}
+                    value={nameValue}
+                    onBlur={nameBlurHandler}
+                    onChange={nameChangeHandler}
                 />
-                {firstNameIsNotValid ? (
-                    <p className={styles["error-text"]}>First name cannot be empty</p>
+                {nameIsNotValid ? (
+                    <p className={styles["error-text"]}>Name cannot be empty</p>
                 ) : (
                     ""
                 )}
             </div>
             <div>
-                <label className={styles.inputLabel} htmlFor="lastName">
-                    Last name
+                <label className={styles.inputLabel} htmlFor="streetName">
+                    Street name
                 </label>
                 <input
-                    id="lastName"
+                    id="streetName"
                     type="text"
-                    value={lastNameValue}
-                    onBlur={lastNameBlurHandler}
-                    onChange={lastNameChangeHandler}
+                    value={streetNameValue}
+                    onBlur={streetNameBlurHandler}
+                    onChange={streetNameChangeHandler}
                 />
-                {lastNameIsNotValid ? (
-                    <p className={styles["error-text"]}>Last name cannot be empty</p>
+                {streetNameIsNotValid ? (
+                    <p className={styles["error-text"]}>Street name cannot be empty</p>
+                ) : (
+                    ""
+                )}
+            </div>
+            <div>
+                <label className={styles.inputLabel} htmlFor="postCode">
+                    Postcode
+                </label>
+                <input
+                    id="postCode"
+                    type="text"
+                    value={postCodeValue}
+                    onBlur={postCodeBlurHandler}
+                    onChange={postCodeChangeHandler}
+                />
+                {postCodeIsNotValid ? (
+                    <p className={styles["error-text"]}>Postcode must be 7 characters</p>
                 ) : (
                     ""
                 )}
@@ -127,16 +165,18 @@ const CartForm = (props) => {
                     ""
                 )}
             </div>
-
-            <button
-                disabled={!formIsValid}
-                className={
-                    formIsValid ? styles.submit : [styles.submit, styles.disabled]
-                }
-                type="submit"
-            >
-                Submit
-            </button>
+            <div className={styles.buttons}>
+                <button
+                    disabled={!formIsValid}
+                    className={formIsValid ? styles.submit : styles.disabled}
+                    type="submit"
+                >
+                    Submit
+                </button>
+                <button className={styles.cancel} onClick={props.onCancelFood}>
+                    Cancel
+                </button>
+            </div>
         </form>
     );
 };

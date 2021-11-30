@@ -25,6 +25,28 @@ const Cart = (props) => {
         cartContext.removeItem(id);
     };
 
+    // send user data and order to the backend
+    const submitOrderHandler = async (userData) => {
+        props.onHideCart();
+
+        const request = await fetch(
+            "https://food-order-app-e6381-default-rtdb.firebaseio.com/orders.json",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    user: userData,
+                    orderItems: cartContext.items,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        const data = await request.json();
+        console.log(data);
+    };
+
     const cartItems = (
         <ul className={styles["cart-items"]}>
             {cartContext.items.map((item) => {
@@ -66,14 +88,16 @@ const Cart = (props) => {
                         ""
                     )}
                 </div>
-                <div></div>
             </Modal>
         );
 
     if (orderClicked)
         return (
             <Modal>
-                <CartForm onOrderFood={hideCheckoutForm} />
+                <CartForm
+                    onCancelFood={hideCheckoutForm}
+                    onOrder={submitOrderHandler}
+                />
             </Modal>
         );
 };
