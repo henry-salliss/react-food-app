@@ -9,6 +9,8 @@ import CartForm from "./Form/CartForm";
 const Cart = (props) => {
     const cartContext = useContext(CartContext);
     const [orderClicked, setOrderClicked] = useState(false);
+    const [ordering, setOrdering] = useState(false);
+    const [ordered, setOrdered] = useState(false);
 
     const orderFoodHandler = () => {
         setOrderClicked(true);
@@ -27,7 +29,7 @@ const Cart = (props) => {
 
     // send user data and order to the backend
     const submitOrderHandler = async (userData) => {
-        props.onHideCart();
+        setOrdering(true)
 
         const request = await fetch(
             "https://food-order-app-e6381-default-rtdb.firebaseio.com/orders.json",
@@ -44,7 +46,9 @@ const Cart = (props) => {
         );
 
         const data = await request.json();
-        console.log(data);
+        setOrdering(false);
+        setOrdered(true);
+        cartContext.clearCart();
     };
 
     const cartItems = (
@@ -68,38 +72,56 @@ const Cart = (props) => {
 
     const hasItems = cartContext.items.length > 0;
 
-    if (!orderClicked)
-        return (
-            <Modal onClick={props.onHideCart}>
-                {cartItems}
-                <div className={styles.total}>
-                    <span>Total Amount</span>
-                    <span>{totalAmount}</span>
-                </div>
-                <div className={styles.actions}>
-                    <button className={styles["button--alt"]} onClick={props.onHideCart}>
-                        Close
+    const modalActions = (
+        <React.Fragment>
+            <div className={styles.actions}>
+                <button className={styles["button--alt"]} onClick={props.onHideCart}>
+                    Close
+                </button>
+                {hasItems ? (
+                    <button onClick={orderFoodHandler} className={styles.button}>
+                        Order
                     </button>
-                    {hasItems ? (
-                        <button onClick={orderFoodHandler} className={styles.button}>
-                            Order
-                        </button>
-                    ) : (
-                        ""
-                    )}
-                </div>
-            </Modal>
-        );
+                ) : (
+                    ""
+                )}
+            </div>
+        </React.Fragment>
+    )
 
-    if (orderClicked)
-        return (
-            <Modal>
-                <CartForm
-                    onCancelFood={hideCheckoutForm}
-                    onOrder={submitOrderHandler}
-                />
-            </Modal>
-        );
+    const modalJSX = (
+        <React.Fragment>
+            {cartItems}
+            <div className={styles.total}>
+                <span>Total Amount</span>
+                <span>{totalAmount}</span>
+            </div>
+            {!orderClicked && modalActions}
+            {orderClicked && <CartForm
+                onCancelFood={hideCheckoutForm}
+                onOrder={submitOrderHandler}
+            />}
+        </React.Fragment>
+    );
+
+    const loadingJSX = <p>Sending order...</p>;
+
+    const foodOrderedJSX = <React.Fragment>
+        <p>Order successfully placed!</p>
+        <div className={styles.actions}>
+            <button className={styles.button} onClick={props.onHideCart}>
+                Close
+            </button>
+        </div>
+    </React.Fragment>
+
+    return (
+        <Modal onClick={props.onHideCart}>
+            {!ordering && !ordered && modalJSX}
+            {ordering && loadingJSX}
+            {!ordering && ordered && foodOrderedJSX}
+        </Modal>
+    );
 };
 
 export default Cart;

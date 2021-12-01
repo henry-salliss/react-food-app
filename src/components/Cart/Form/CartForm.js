@@ -173,7 +173,7 @@ const CartForm = (props) => {
                 >
                     Submit
                 </button>
-                <button className={styles.cancel} onClick={props.onCancelFood}>
+                <button className={styles.cancel}>
                     Cancel
                 </button>
             </div>
